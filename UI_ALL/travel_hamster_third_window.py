@@ -1,7 +1,8 @@
 import tkinter as tk
 from tkinter import ttk # Import ttk
-from tkinter import messagebox
+from tkinter import messagebox, simpledialog
 from travel_hamster_utils import CapsuleButton, BG_COLOR, PRIMARY_COLOR, icon_images, load_icons
+from openai import OpenAI
 
 def show_third_window(root):
     window2 = tk.Toplevel(root)
@@ -66,3 +67,30 @@ def show_third_window(root):
     # Pack scrollbar and canvas
     scrollbar.pack(side="right", fill="y")
     canvas.pack(side="left", fill="both", expand=True)
+
+    def open_hamster_chat():
+        from dotenv import load_dotenv
+        import os
+
+        load_dotenv()
+
+        client = OpenAI(api_key=os.getenv('DEEPSEEK_API_KEY'), base_url="https://api.deepseek.com")
+        user_input = simpledialog.askstring("与小仓鼠对话", "请输入你的问题：")
+        if user_input:
+            try:
+                response = client.chat.completions.create(
+                    model="deepseek-chat",
+                    messages=[
+                        {"role": "system", "content": "你是一个可爱的旅行小仓鼠助手，擅长提供旅行建议和有趣的旅行小知识"},
+                        {"role": "user", "content": user_input},
+                    ],
+                    stream=False
+                )
+                hamster_reply = response.choices[0].message.content
+                messagebox.showinfo("小仓鼠的回复", hamster_reply)
+            except Exception as e:
+                messagebox.showerror("错误", f"对话出现问题：{str(e)}")
+
+    # 添加与小仓鼠对话的按钮
+    chat_button = CapsuleButton(top_frame, text="与小仓鼠对话", command=open_hamster_chat, bg=PRIMARY_COLOR, fg="white")
+    chat_button.pack(side='right', padx=10)
