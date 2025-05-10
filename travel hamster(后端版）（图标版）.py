@@ -10,7 +10,6 @@ PRIMARY_COLOR = '#6EC6F2'  # 主色调淡蓝
 BG_COLOR = '#F6FBFF'       # 背景色
 ENTRY_BG = '#FFFFFF'       # 输入框背景
 BUTTON_BG = '#6EC6F2'      # 按钮背景
-BUTTON_HOVER = '#4BA3C7'   # 按钮悬停
 BUTTON_ACTIVE = '#3B8EB5'  # 按钮按下
 LABEL_COLOR = '#333333'    # 文字颜色
 
@@ -76,15 +75,12 @@ class CapsuleButton(tk.Canvas):
         self.height = height
         self.bg = BUTTON_BG
         self.fg = 'white'
-        self.hover_bg = BUTTON_HOVER
         self.active_bg = BUTTON_ACTIVE
         self.current_bg = self.bg
         self.text_id = None
         self.rect_id = None
         self.animating = False
         self.draw_button(self.bg)
-        self.bind('<Enter>', self.on_enter)
-        self.bind('<Leave>', self.on_leave)
         self.bind('<Button-1>', self.on_click)
         self.bind('<ButtonRelease-1>', self.on_release)
         self.text_item = self.create_text(self.width//2, self.height//2, text=self.text, font=('Arial', 15, 'bold'), fill=self.fg)
@@ -123,14 +119,10 @@ class CapsuleButton(tk.Canvas):
             self.after(interval, lambda: step(i+1, nr, ng, nb))
         step()
 
-    def on_enter(self, event):
-        self.animate_to(self.hover_bg)
-    def on_leave(self, event):
-        self.animate_to(self.bg)
     def on_click(self, event):
         self.animate_to(self.active_bg, steps=5, interval=10)
     def on_release(self, event):
-        self.animate_to(self.hover_bg)
+        self.animate_to(self.bg)
         if self.command:
             self.command()
 
