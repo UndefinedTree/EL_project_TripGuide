@@ -47,6 +47,23 @@ def show_third_window(root):
 
     canvas.bind('<Configure>', on_canvas_configure)
 
+    # 交通信息框架
+    traffic_frame = tk.LabelFrame(inner_frame, text="交通", font=('Arial', 13, 'bold'), fg='white', bg=PRIMARY_COLOR, bd=0, relief=tk.FLAT, padx=15, pady=10, labelanchor='n')
+    traffic_frame.pack(pady=(20, 5), padx=10, fill=tk.X)
+    traffic_frame.config(highlightbackground=PRIMARY_COLOR, highlightcolor=PRIMARY_COLOR)
+
+    traffic_options = [
+        ("高铁", "on_train_link_click"),
+        ("航班", "on_flight_link_click"),
+        ("驾车导航", "on_drive_link_click")
+    ]
+    for idx, (label, callback_name) in enumerate(traffic_options):
+        tk.Label(traffic_frame, text=label, font=('Arial', 12), bg=PRIMARY_COLOR, fg='white').grid(row=idx, column=0, padx=(10,0), pady=5, sticky='w')
+        btn = tk.Button(traffic_frame, text="链接", font=('Arial', 11), fg='yellow', cursor='hand2', relief=tk.FLAT, bg=PRIMARY_COLOR, bd=0)
+        btn.grid(row=idx, column=1, padx=(0,20), pady=5, sticky='w')
+        # 留空回调接口，用户后续自行实现
+        # btn.config(command=lambda: None)
+
     # 定义类别和对应的图标键及文本
     category_definitions = [
         ('weather', '天气'),
