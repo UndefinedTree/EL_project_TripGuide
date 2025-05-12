@@ -12,7 +12,7 @@ class Application(Frame):
         self.createWidget()
 
     def createWidget(self):
-        self.btn 01=Label(self,text='出发地：',bg='grey',font=('Arial',12),width=10,height=1)
+        self.btn01=Label(self,text='出发地：',bg='grey',font=('Arial',12),width=10,height=1)
         self.btn01.pack(side=LEFT)
         self.btn0101=Entry(self,width=20,font=('Arial',12))
         self.btn0101.pack()
