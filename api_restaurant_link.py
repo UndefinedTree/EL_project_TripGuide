@@ -8,11 +8,12 @@ biz_params = {
     "user_defined_params": {
         "<YOUR_TOOL_ID>": {
             "article_index": 2}}}
-def get_train(prompt):
+
+def get_restaurant_link(prompt):
     response = Application.call(
     # 若没有配置环境变量，可用百炼API Key将下行替换为：api_key="sk-xxx"。但不建议在生产环境中直接将API Key硬编码到代码中，以减少API Key泄露风险。
     api_key='sk-1434851a216f41feadb08b5afcbf2223',
-    app_id='66d9fe3c60604177a2a3a1db27196f84',
+    app_id='4c1f24312f3e436184c16e7560d98fae',
     prompt=prompt,
     biz_params=biz_params)
     if response.status_code != HTTPStatus.OK:
@@ -20,6 +21,7 @@ def get_train(prompt):
         print(f'code={response.status_code}')
         print(f'message={response.message}')
         print(f'请参考文档：https://help.aliyun.com/zh/model-studio/developer-reference/error-code')
+        return None
     else:
         # print('%s\n' % response.output.text)  # 处理只输出文本text
         # print('%s\n' % (response.usage))
@@ -34,11 +36,8 @@ def get_train(prompt):
         match = url_pattern.search(output)
         if match:
             return match.group()
-    return None
+        return None
 
 
-input = '南京，北京，2025年5月20日'
+#测试部分
 
-output = get_train(input)
-
-print(output)

@@ -8,11 +8,12 @@ biz_params = {
     "user_defined_params": {
         "<YOUR_TOOL_ID>": {
             "article_index": 2}}}
-def get_hotel_link(prompt):
+
+def get_train(prompt):
     response = Application.call(
     # 若没有配置环境变量，可用百炼API Key将下行替换为：api_key="sk-xxx"。但不建议在生产环境中直接将API Key硬编码到代码中，以减少API Key泄露风险。
     api_key='sk-1434851a216f41feadb08b5afcbf2223',
-    app_id='5fa4548f596140508770af942c796371',
+    app_id='66d9fe3c60604177a2a3a1db27196f84',
     prompt=prompt,
     biz_params=biz_params)
     if response.status_code != HTTPStatus.OK:
@@ -22,9 +23,6 @@ def get_hotel_link(prompt):
         print(f'请参考文档：https://help.aliyun.com/zh/model-studio/developer-reference/error-code')
         return None
     else:
-        # print('%s\n' % response.output.text)  # 处理只输出文本text
-        # print('%s\n' % (response.usage))
-
         # 由于ai的返回会有多余的文字，提取出单独的链接
         output = response.output.text
         url_pattern = re.compile(
@@ -35,12 +33,6 @@ def get_hotel_link(prompt):
         match = url_pattern.search(output)
         if match:
             return match.group()
-        return None
+    return None
 
-#测试部分
-input_hotel_link = '南京，南京香格里拉大酒店'
-
-hotel_link = get_hotel_link(input_hotel_link)
-
-print(hotel_link)
 

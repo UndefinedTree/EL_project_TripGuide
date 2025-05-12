@@ -46,6 +46,8 @@ def save_info():
         f.write(f"出发地: {startplace}\n 目的地：{destination}\n出发时间：{startyear, startmonth, startdate}\n"
                 f"旅行天数：{days}\n旅行目的: {', '.join(target)}\n特别想去的地方：{wanttogo}\n"
                 f"出行人数：{people}\n其他的话：{other}\n")
+    
+    
 
 def collect_and_next():
     if validate_input():
@@ -55,7 +57,15 @@ def collect_and_next():
 def show_next_window():
     import travel_hamster_second_window
     root.withdraw()
-    travel_hamster_second_window.show_second_window(root)
+    # 获取所有需要的参数
+    startplace = startanswer.get()
+    destination = destinationanswer.get()
+    startyear = dateyearanswer.get()
+    startmonth = datemonthanswer.get()
+    startdate = dateanswer.get()
+    days = sumdayanswer.get()
+    # 传递所有参数到第二个窗口
+    travel_hamster_second_window.show_second_window(root, startplace, destination, startyear, startmonth, startdate, days)
 
 # 主窗口
 root = tk.Tk()

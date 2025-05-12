@@ -1,3 +1,4 @@
+import os
 import tkinter as tk
 from tkinter import ttk
 import os
@@ -7,7 +8,7 @@ ENTRY_BG = '#FFFFFF'       # 输入框背景
 BUTTON_BG = '#6EC6F2'      # 按钮背景
 BUTTON_ACTIVE = '#3B8EB5'  # 按钮按下
 LABEL_COLOR = '#333333'    # 文字颜色
-ICON_DIR = '/Users/wangxizheng/MINE/MyProject/EL_project_TripGuide/icongif'
+ICON_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'icongif')
 ICON_MAP = {
     'title': 'title.gif',           # 标题
     'start': 'start.gif',           # 出发地
@@ -22,6 +23,8 @@ ICON_MAP = {
     'play': 'goout.gif',            # 游玩
     'food': 'food.gif',             # 餐饮
     'lodging': 'hotel.gif',         # 住宿
+    'train': 'train.gif',           # 高铁
+    'airplane': 'airplane.gif',     # 航班
 }
 icon_images = {}
 def load_icons():

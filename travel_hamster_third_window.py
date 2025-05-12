@@ -5,8 +5,9 @@ from PIL import Image, ImageDraw, ImageTk
 import tkinter.font as tkFont
 from travel_hamster_utils import CapsuleButton, BG_COLOR, PRIMARY_COLOR, icon_images, load_icons
 from openai import OpenAI
+import webbrowser
 
-def show_third_window(root):
+def show_third_window(root, startplace, destination, startyear, startmonth, startdate, days, hotel_list, hotel_link_list, restaurant_list, restaurant_link_list, train_link, air_link, nav_info, spot_list):
     window2 = tk.Toplevel(root)
     window2.title("travel hamster")
     window2.geometry("1000x650+250+100")
@@ -31,7 +32,6 @@ def show_third_window(root):
     tk.Label(top_frame, text="铛铛！以下是小仓鼠为你准备的旅行攻略~", font=('Arial', 12, 'bold'), bg=BG_COLOR, fg='black').pack()
     tk.Label(top_frame, text="💙请查收₍ᐢ..ᐢ₎♡", font=('Arial', 12, 'bold'), bg=BG_COLOR, fg='black').pack()
 
-
     frame = tk.Frame(window2, bg=BG_COLOR)
     frame.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
     load_icons() # 加载图标资源
@@ -49,20 +49,25 @@ def show_third_window(root):
 
     # 交通信息框架
     traffic_frame = tk.LabelFrame(inner_frame, text="交通", font=('Arial', 13, 'bold'), fg='white', bg=PRIMARY_COLOR, bd=0, relief=tk.FLAT, padx=15, pady=10, labelanchor='n')
-    traffic_frame.pack(pady=(20, 5), padx=10, fill=tk.X)
-    traffic_frame.config(highlightbackground=PRIMARY_COLOR, highlightcolor=PRIMARY_COLOR)
+    traffic_frame.pack(pady=(0, 5), padx=0, fill=tk.X)
 
     traffic_options = [
-        ("高铁", "on_train_link_click"),
-        ("航班", "on_flight_link_click"),
-        ("驾车导航", "on_drive_link_click")
+        ("高铁：", train_link, 'train'), # 添加图标键 'train'
+        ("航班：", air_link, 'airplane'),   # 添加图标键 'airplane'
     ]
-    for idx, (label, callback_name) in enumerate(traffic_options):
-        tk.Label(traffic_frame, text=label, font=('Arial', 12), bg=PRIMARY_COLOR, fg='white').grid(row=idx, column=0, padx=(10,0), pady=5, sticky='w')
-        btn = tk.Button(traffic_frame, text="链接", font=('Arial', 11), fg='yellow', cursor='hand2', relief=tk.FLAT, bg=PRIMARY_COLOR, bd=0)
-        btn.grid(row=idx, column=1, padx=(0,20), pady=5, sticky='w')
-        # 留空回调接口，用户后续自行实现
-        # btn.config(command=lambda: None)
+    for idx, (label_text, link, icon_key) in enumerate(traffic_options): # 修改循环以解包图标键
+        # 创建带图标的标签
+        icon_label = tk.Label(traffic_frame, text=label_text, image=icon_images.get(icon_key), compound='left', font=('Arial', 15), bg=PRIMARY_COLOR, fg='white')
+        icon_label.image = icon_images.get(icon_key) # 保持对图片的引用
+        icon_label.grid(row=idx, column=0, padx=(60,0), pady=5, sticky='w') # Increased left padding
+        # 检查链接是否存在且不为空
+        if link:
+            link_label = tk.Label(traffic_frame, text="订票链接点这里哦", font=('Arial', 12), fg='white', cursor='hand2', bg=PRIMARY_COLOR)
+            link_label.bind("<Button-1>", lambda e, url=link: webbrowser.open(url)) # Bind click event
+            link_label.grid(row=idx, column=1, padx=(0,100), pady=5, sticky='w')
+        else:
+            # 如果没有链接，可以显示不同文本或禁用按钮
+            tk.Label(traffic_frame, text="无链接", font=('Arial', 11), fg='grey', bg=PRIMARY_COLOR).grid(row=idx, column=1, padx=(0,20), pady=5, sticky='w')
 
     # 定义类别和对应的图标键及文本
     category_definitions = [
@@ -72,16 +77,75 @@ def show_third_window(root):
         ('lodging', '住宿')
     ]
 
-    for i in range(1, 4): # 假设显示3天
-        tk.Label(inner_frame, text=f"Day {i}", font=('Arial', 14, 'bold'), bg=PRIMARY_COLOR, fg='white').pack(pady=(20, 5), padx=10, fill=tk.X)
+    # 使用传入的天数参数
+    try:
+        int_days = int(days)
+    except ValueError:
+        int_days = 3  # 如果转换失败，默认显示3天
+    
+    for i in range(1, int_days + 1): # 使用传入的天数
+        tk.Label(inner_frame, text=f"Day {i}", font=('Arial', 14, 'bold'), bg=PRIMARY_COLOR, fg='white').pack(pady=(0, 5), padx=10, fill=tk.X) # Reduced top padding
         table_frame = tk.Frame(inner_frame, bg=BG_COLOR)
         table_frame.pack(pady=20)
+
+        # Configure columns for alignment across days
+        table_frame.grid_columnconfigure(0, minsize=230) # Min width for Icon/Label col (approx width=150 + padx=60+20)
+        table_frame.grid_columnconfigure(1, weight=1)    # Allow Content col to expand
+        table_frame.grid_columnconfigure(2, minsize=100) # Min width for Link col
         
         for idx, (icon_key, text) in enumerate(category_definitions):
+            # Icon + Category Text Label
             icon_label = tk.Label(table_frame, image=icon_images.get(icon_key), text=text, compound='left', font=('Arial', 12, 'bold'), width=150, anchor="w", bg=BG_COLOR, fg='black')
             icon_label.image = icon_images.get(icon_key) # 保持对图片的引用
-            icon_label.grid(row=idx * 3, column=1, padx=60, pady=10, rowspan=3, sticky='w')
-            tk.Label(table_frame, text="待安排", width=100, anchor="w", bg=BG_COLOR, fg='black').grid(row=idx * 3, column=2, columnspan=10, padx=10, pady=10, rowspan=3, sticky='w')
+            icon_label.grid(row=idx, column=0, padx=(60, 20), pady=5, sticky='w') # Adjusted grid
+
+            # Determine Content Text and Link URL
+            content_text = "信息待获取" # 默认文本
+            link_url = None
+            link_display_text = "查看链接" # Text for the link
+            current_day_index = i - 1 # 列表索引从0开始
+
+            try:
+                if icon_key == 'weather':
+                    content_text = "天气信息待接入"
+                elif icon_key == 'play':
+                    # Ensure spot_list has data for the day
+                    content_text = spot_list[current_day_index].strip() if current_day_index < len(spot_list) and spot_list[current_day_index] else "自由活动"
+                elif icon_key == 'food':
+                    # Ensure restaurant_list and link_list have data for the day
+                    if current_day_index < len(restaurant_list) and restaurant_list[current_day_index]:
+                        content_text = restaurant_list[current_day_index]
+                        if current_day_index < len(restaurant_link_list) and restaurant_link_list[current_day_index]:
+                            link_url = restaurant_link_list[current_day_index]
+                    else:
+                        content_text = "自寻美食"
+                elif icon_key == 'lodging':
+                    # Ensure hotel_list and link_list have data for the day, with fallback
+                    if current_day_index < len(hotel_list) and hotel_list[current_day_index]:
+                        content_text = hotel_list[current_day_index]
+                        if current_day_index < len(hotel_link_list) and hotel_link_list[current_day_index]:
+                            link_url = hotel_link_list[current_day_index]
+                    elif len(hotel_list) > 2 and hotel_list[2]: # Fallback to day 3 (index 2) if current day empty and day 3 exists
+                         content_text = hotel_list[2]
+                         if 2 < len(hotel_link_list) and hotel_link_list[2]: # Check link for fallback
+                             link_url = hotel_link_list[2]
+                    else:
+                         content_text = "未指定住宿" # Default if no data
+
+            except IndexError:
+                # This handles cases where lists (spot_list, restaurant_list, etc.) are shorter than expected
+                content_text = "信息缺失"
+
+            # Content Text Label
+            content_label = tk.Label(table_frame, text=content_text, anchor="w", bg=BG_COLOR, fg='black', wraplength=450, justify=tk.LEFT) # Reduced wraplength for narrower column
+            content_label.grid(row=idx, column=1, padx=10, pady=5, sticky='w')
+
+            # Clickable Link Label (only for food/lodging with a valid link)
+            if link_url and isinstance(link_url, str) and link_url.strip() and (icon_key == 'food' or icon_key == 'lodging'):
+                link_widget = tk.Label(table_frame, text=link_display_text, font=('Arial', 11), fg='lightblue', cursor='hand2', bg=BG_COLOR)
+                # Ensure lambda captures the correct URL for this iteration
+                link_widget.bind("<Button-1>", lambda e, url=link_url: webbrowser.open(url))
+                link_widget.grid(row=idx, column=2, padx=10, pady=5, sticky='w')
 
     # Pack scrollbar and canvas
     scrollbar.pack(side="right", fill="y")
@@ -272,4 +336,4 @@ def show_third_window(root):
 
     # 添加与小仓鼠对话的按钮
     chat_button = CapsuleButton(top_frame, text="与小仓鼠对话", command=open_hamster_chat, bg=PRIMARY_COLOR, fg="white")
-    chat_button.pack(side='right', padx=10)
+    chat_button.pack(side='right', padx=20, pady=10)

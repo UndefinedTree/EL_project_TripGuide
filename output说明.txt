@@ -3,6 +3,6 @@ get_hotel返回一个元素为酒店名字符串的列表
 get_hotel_link返回酒店链接字符串
 get_navigation返回文字导航字符串
 get_restaurant返回一个元素为餐厅名字符串的列表
-get_hotel_link返回餐厅链接字符串
+get_restaurant_link返回餐厅链接字符串
 get_train返回订动车票链接字符串
 get_weather部分尚未完成

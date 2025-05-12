@@ -8,11 +8,12 @@ biz_params = {
     "user_defined_params": {
         "<YOUR_TOOL_ID>": {
             "article_index": 2}}}
-def get_air(prompt):
+
+def get_hotel_link(prompt):
     response = Application.call(
     # 若没有配置环境变量，可用百炼API Key将下行替换为：api_key="sk-xxx"。但不建议在生产环境中直接将API Key硬编码到代码中，以减少API Key泄露风险。
     api_key='sk-1434851a216f41feadb08b5afcbf2223',
-    app_id='755193a13f9040a4858aeec15b05ac15',
+    app_id='5fa4548f596140508770af942c796371',
     prompt=prompt,
     biz_params=biz_params)
     if response.status_code != HTTPStatus.OK:
@@ -35,12 +36,7 @@ def get_air(prompt):
         match = url_pattern.search(output)
         if match:
             return match.group()
-    return None
-
+        return None
 
 #测试部分
-input = '南京，北京，2025年5月20日'
 
-output = get_air(input)
-
-print(output)

@@ -7,6 +7,7 @@ biz_params = {
     "user_defined_params": {
         "<YOUR_TOOL_ID>": {
             "article_index": 2}}}
+
 def get_hotel(prompt):
     global hotel_list
     response = Application.call(
@@ -29,7 +30,3 @@ def get_hotel(prompt):
         return hotel_list       #返回一个酒店名的列表
 
 #测试部分
-input_hotel = '南京'
-hotelList = get_hotel(input_hotel)
-for hotel in hotelList:
-    print(hotel)
