@@ -10,6 +10,7 @@ import api_train  # 导入api_train模块
 import api_navigation  # 导入api_navigation模块
 import api_air  # 导入api_air模块
 import api_spot  # 导入api_spot模块
+import api_weather  # 导入api_weather模块
 
 def show_second_window(root, startplace, destination, startyear, startmonth, startdate, days):
     # 调用api_hotel获取酒店信息
@@ -45,9 +46,8 @@ def show_second_window(root, startplace, destination, startyear, startmonth, sta
     print("导航信息：", nav_info)
 
     # 调用api_weather获取天气信息
-    # weather_info = api_weather.set_weather_info(destination, startyear, startmonth, startdate)
-    # if weather_info:
-    #     print("天气信息：", weather_info)
+    weather_info = api_weather.get_weather(destination)
+    print("天气信息：", weather_info)
 
     # 调用api_spot获取景点信息
     spot_list = ["" for _ in range(int(days))]
@@ -85,6 +85,6 @@ def show_second_window(root, startplace, destination, startyear, startmonth, sta
     def next_window():
         new_window.destroy()
         import travel_hamster_third_window
-        travel_hamster_third_window.show_third_window(root, startplace, destination, startyear, startmonth, startdate, days, hotel_list, hotel_link_list, restaurant_list, restaurant_link_list, train_link, air_link, nav_info,spot_list)
+        travel_hamster_third_window.show_third_window(root, startplace, destination, startyear, startmonth, startdate, days, hotel_list, hotel_link_list, restaurant_list, restaurant_link_list, train_link, air_link, nav_info, weather_info, spot_list)
 
     CapsuleButton(center_frame, text="确认", command=next_window).pack(pady=30)

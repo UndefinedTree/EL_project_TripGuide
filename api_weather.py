@@ -33,7 +33,7 @@ def get_weather(city_name):
             return None
 
         # 解析数据
-        weather_list = {}
+        weather_list = []
         # print(f"\n{city_name} 未来14天天气预报：")
         for day in data['forecast']['forecastday']:
             date = datetime.strptime(day['date'], '%Y-%m-%d')
@@ -49,17 +49,12 @@ def get_weather(city_name):
             chinese_weekdays = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"]
             weekday_cn = chinese_weekdays[date.weekday()]
 
-            # print(
-            #     f"{date.month}/{date.day} {weekday_cn} | "
-            #     f"温度：{min_temp}~{max_temp}℃ | "
-            #     f"天气：{condition} | "
-            #     f"降雨概率：{rain_chance}%"
-            # )
-            weather_list[f"{date.month}/{date.day}"] = \
-                f"{date.month}/{date.day} {weekday_cn} | "\
-                f"温度：{min_temp}~{max_temp}℃ | "\
-                f"天气：{condition} | "\
-                f"降雨概率：{rain_chance}%"
+            # 构建天气信息字符串
+            weather_info = f"{date.month}/{date.day} {weekday_cn} | "\
+                         f"温度：{min_temp}~{max_temp}℃ | "\
+                         f"天气：{condition} | "\
+                         f"降雨概率：{rain_chance}%"
+            weather_list.append(weather_info)
         return weather_list
     except Exception as e:
         print(f"发生错误：{str(e)}")
@@ -67,5 +62,3 @@ def get_weather(city_name):
 
 
 # 使用示例
-weather = get_weather("南京市南京大学鼓楼校区")
-print(weather)

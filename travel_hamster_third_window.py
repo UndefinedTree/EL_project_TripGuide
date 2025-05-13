@@ -6,8 +6,9 @@ import tkinter.font as tkFont
 from travel_hamster_utils import CapsuleButton, BG_COLOR, PRIMARY_COLOR, icon_images, load_icons
 from openai import OpenAI
 import webbrowser
+from datetime import datetime, date
 
-def show_third_window(root, startplace, destination, startyear, startmonth, startdate, days, hotel_list, hotel_link_list, restaurant_list, restaurant_link_list, train_link, air_link, nav_info, spot_list):
+def show_third_window(root, startplace, destination, startyear, startmonth, startdate, days, hotel_list, hotel_link_list, restaurant_list, restaurant_link_list, train_link, air_link, nav_info, weather_info, spot_list):
     window2 = tk.Toplevel(root)
     window2.title("travel hamster")
     window2.geometry("1000x650+250+100")
@@ -31,6 +32,11 @@ def show_third_window(root, startplace, destination, startyear, startmonth, star
     #tk.Label(top_frame, text="").pack()
     tk.Label(top_frame, text="铛铛！以下是小仓鼠为你准备的旅行攻略~", font=('Arial', 12, 'bold'), bg=BG_COLOR, fg='black').pack()
     tk.Label(top_frame, text="💙请查收₍ᐢ..ᐢ₎♡", font=('Arial', 12, 'bold'), bg=BG_COLOR, fg='black').pack()
+
+    # 计算当前日期与起始日期的天数差
+    current_date = datetime.now().date()
+    start_date = date(int(startyear), int(startmonth), int(startdate))
+    days_diff = (start_date - current_date).days
 
     frame = tk.Frame(window2, bg=BG_COLOR)
     frame.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
@@ -107,7 +113,7 @@ def show_third_window(root, startplace, destination, startyear, startmonth, star
 
             try:
                 if icon_key == 'weather':
-                    content_text = "天气信息待接入"
+                    content_text = weather_info[current_day_index+days_diff] if current_day_index+days_diff < len(weather_info) and weather_info[current_day_index+days_diff] else "小仓鼠不是先知，不能预告更多的天气哟"
                 elif icon_key == 'play':
                     # Ensure spot_list has data for the day
                     content_text = spot_list[current_day_index].strip() if current_day_index < len(spot_list) and spot_list[current_day_index] else "自由活动"
