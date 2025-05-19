@@ -75,6 +75,19 @@ def show_third_window(root, startplace, destination, startyear, startmonth, star
             # 如果没有链接，可以显示不同文本或禁用按钮
             tk.Label(traffic_frame, text="无链接", font=('Arial', 11), fg='grey', bg=PRIMARY_COLOR).grid(row=idx, column=1, padx=(0,20), pady=5, sticky='w')
 
+    # 在“航班”下方添加导航信息
+    nav_label = tk.Label(traffic_frame, text="导航信息：", font=('Arial', 12, 'bold'), bg=PRIMARY_COLOR, fg='white', anchor='nw', justify='left')
+    nav_label.grid(row=len(traffic_options), column=0, padx=(60,0), pady=5, sticky='nw')
+
+    nav_content = tk.Label(traffic_frame, text=nav_info, font=('Arial', 11), bg=PRIMARY_COLOR, fg='white', anchor='w', justify='left', wraplength=520)
+    nav_content.grid(row=len(traffic_options), column=1, padx=(0,100), pady=5, sticky='w')
+
+    # 自适应内容高度
+    nav_content.update_idletasks()
+    traffic_frame.update_idletasks()
+    traffic_frame.pack_propagate(True)
+    traffic_frame.pack(fill=tk.X, expand=True)
+
     # 定义类别和对应的图标键及文本
     category_definitions = [
         ('weather', '天气'),
